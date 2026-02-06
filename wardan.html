@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Warden Dashboard</title>
+  <style>
+    body { font-family: Arial; background:#f4f6fb; padding:20px; }
+    table { width:100%; background:white; border-collapse:collapse; }
+    th { background:#1f3c88; color:white; }
+    th, td { padding:10px; border-bottom:1px solid #ccc; }
+    button { padding:6px 10px; border:none; color:white; border-radius:5px; cursor:pointer; }
+    .approve { background:green; }
+    .reject { background:red; }
+  </style>
+</head>
+<body>
+
+<h2>Warden Dashboard</h2>
+
+<table>
+  <tr>
+    <th>Student</th>
+    <th>Type</th>
+    <th>From</th>
+    <th>To</th>
+    <th>Reason</th>
+    <th>Action</th>
+  </tr>
+  <tbody id="wardenTable"></tbody>
+</table>
+
+<script>
+let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+let table = document.getElementById("wardenTable");
+
+function loadWarden() {
+  table.innerHTML = "";
+  leaves.forEach((l,i) => {
+    if (l.status === "Mentor Approved (Warden Approval Pending)") {
+      table.innerHTML += `
+        <tr>
+          <td>${l.student}</td>
+          <td>${l.type}</td>
+          <td>${l.from}</td>
+          <td>${l.to}</td>
+          <td>${l.reason}</td>
+          <td>
+            <button class="approve" onclick="finalApprove(${i})">Final Approve</button>
+            <button class="reject" onclick="finalReject(${i})">Reject</button>
+          </td>
+        </tr>`;
+    }
+  });
+}
+
+function finalApprove(i) {
+  leaves[i].status = "Approved by Warden";
+  localStorage.setItem("leaves", JSON.stringify(leaves));
+  alert("Final Approved");
+  loadWarden();
+}
+
+function finalReject(i) {
+  leaves[i].status = "Rejected by Warden";
+  localStorage.setItem("leaves", JSON.stringify(leaves));
+  alert("Rejected");
+  loadWarden();
+}
+
+loadWarden();
+</script>
+
+</body>
+</html>

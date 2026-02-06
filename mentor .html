@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mentor Dashboard</title>
+  <style>
+    body { font-family: Arial; background:#f4f6fb; padding:20px; }
+    table { width:100%; background:white; border-collapse:collapse; }
+    th, td { padding:10px; border-bottom:1px solid #ccc; }
+    button { padding:6px 10px; border:none; color:white; border-radius:5px; cursor:pointer; }
+    .approve { background:green; }
+    .reject { background:red; }
+  </style>
+</head>
+<body>
+
+<h2>Mentor Dashboard</h2>
+
+<table>
+  <tr>
+    <th>Student</th>
+    <th>Type</th>
+    <th>From</th>
+    <th>To</th>
+    <th>Reason</th>
+    <th>Action</th>
+  </tr>
+  <tbody id="mentorTable"></tbody>
+</table>
+
+<script>
+let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+let table = document.getElementById("mentorTable");
+
+function loadMentor() {
+  table.innerHTML = "";
+  leaves.forEach((l,i) => {
+    if (l.status === "Pending (Mentor Approval)") {
+      table.innerHTML += `
+        <tr>
+          <td>${l.student}</td>
+          <td>${l.type}</td>
+          <td>${l.from}</td>
+          <td>${l.to}</td>
+          <td>${l.reason}</td>
+          <td>
+            <button class="approve" onclick="approve(${i})">Approve</button>
+            <button class="reject" onclick="reject(${i})">Reject</button>
+          </td>
+        </tr>`;
+    }
+  });
+}
+
+function approve(i) {
+  leaves[i].status = "Mentor Approved (Warden Approval Pending)";
+  localStorage.setItem("leaves", JSON.stringify(leaves));
+  alert("Approved & Sent to Warden");
+  loadMentor();
+}
+
+function reject(i) {
+  leaves[i].status = "Rejected by Mentor";
+  localStorage.setItem("leaves", JSON.stringify(leaves));
+  alert("Rejected");
+  loadMentor();
+}
+
+loadMentor();
+</script>
+
+</body>
+</html>
